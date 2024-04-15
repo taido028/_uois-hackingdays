@@ -41,7 +41,7 @@ import jwt
 @pytest.mark.asyncio
 async def test_get_public_key_success():
     backend = BasicAuthBackend()
-    # Giả lập thành công khi lấy public key
+    # Case success emulation achieving public key
     with patch('aiohttp.ClientSession.get') as mocked_get:
         mocked_response = AsyncMock(status=200, text=AsyncMock(return_value='"valid_key"\\n'))
         mocked_get.return_value.__aenter__.return_value = mocked_response
@@ -52,7 +52,7 @@ async def test_get_public_key_success():
 @pytest.mark.asyncio
 async def test_get_public_key_failure():
     backend = BasicAuthBackend()
-    # Giả lập thất bại khi lấy public key
+    # Case failure emulation achieving public key
     with patch('aiohttp.ClientSession.get') as mocked_get:
         mocked_response = AsyncMock(status=404)
         mocked_get.return_value.__aenter__.return_value = mocked_response
@@ -76,7 +76,7 @@ async def test_authenticate_success():
 
 # @pytest.mark.asyncio
 # async def test_authenticate_invalid_token():
-#     # Tạo đối tượng backend
+#     # Create backend object
 #     backend = BasicAuthBackend()
 #     backend.publickey = b'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMmQ5ZGM1Y2EtYTRhMi0xMWVkLWI5ZGYtMDI0MmFjMTIwMDAzIn0.XJQz5ISKRhwQ8wx_UDnflk9T4kxZi6OIqmRex4_ePv4' 
 
@@ -122,36 +122,36 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_basic_authentication_middleware_302():
-    # Tạo một request giả lập
+    # Create a emulation request
     request = Request(scope={"type": "http", "path": "/some/path", "headers": []})
-    # Tạo một exception giả
+    # Create a false exception
     exception = Exception("Test exception")
 
-    # Gọi phương thức default_on_error
+    # Call out method default_on_error
     response = BasicAuthenticationMiddleware302.default_on_error(request, exception)
 
-    # Kiểm tra liệu response có đúng là RedirectResponse không    
+    # Control if response is RedirectResponse or not    
     assert isinstance(response, RedirectResponse)
-    # Kiểm tra status code của response
+    # Control the status code of response
     assert response.status_code == HTTPStatus.FOUND  # 302 FOUND  
-    # Kiểm tra URL đích của redirect
+    # Control the destination URL of redirect
     assert response.headers["location"] == "/oauth/login2?redirect_uri=/some/path"
 
 @pytest.mark.asyncio
 async def test_basic_authentication_middleware_404():
-    # Tạo một request giả lập
+    # Create a emulation request 
     request = Request(scope={"type": "http", "path": "/some/path", "headers": []})
-    # Tạo một exception giả
+    # Create a false exception 
     exception = Exception("Test exception")
 
-    # Gọi phương thức default_on_error
+    # Call out method default_on_error
     response = BasicAuthenticationMiddleware404.default_on_error(request, exception)
 
-    # Kiểm tra liệu response có đúng là PlainTextResponse không   
+    # Control if response is PlainTextResponse or not   
     assert isinstance(response, PlainTextResponse)
-    # Kiểm tra status code của response
+    # Control the status code of response
     assert response.status_code == HTTPStatus.NOT_FOUND  # 404 Not Found
-    # Kiểm tra nội dung của response
+    # Control the content of response
     assert response.body.decode() == "Unauthorized for /some/path"
 
 
