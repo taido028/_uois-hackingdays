@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   frontend:
-    image: hrbolek/frontend
+    image: hrbolek/frontend:0.8.5
     environment:
       - DEMO=False
       - DEMODATA=True
@@ -46,7 +46,9 @@ services:
           {"name": "forms", "url": "http://gql_forms:8000/gql"},
           {"name": "granting", "url": "http://gql_granting:8000/gql"},
           {"name": "facilities", "url": "http://gql_facilities:8000/gql"},
-          {"name": "events", "url": "http://gql_events:8000/gql"}
+          {"name": "events", "url": "http://gql_events:8000/gql"},
+          {"name": "projects", "url": "http://gql_projects:8000/gql"}
+
         ]       
     healthcheck:
       # definice, umoznujici provest test, zda je kontejner v poradku (vsimnete si portu a srovnejte s portem v environment)
@@ -64,9 +66,10 @@ services:
       - gql_events
       - gql_granting
       - gql_facilities
+      - gql_projects
 
   gql_ug:
-    image: hrbolek/gql_ug #   image: kavic/ug
+    image: hrbolek/gql_ug:0.8.5 #   image: kavic/ug
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -93,7 +96,7 @@ services:
 
   gql_events:
     # image: nafreju2/gql_events # where u user.events
-    image: hrbolek/gql_events # where u user.events
+    image: hrbolek/gql_events:0.8.5 # where u user.events
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -112,7 +115,7 @@ services:
       - postgres_gql
 
   gql_facilities:
-    image: hrbolek/gql_facilities 
+    image: hrbolek/gql_facilities:0.8.5
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -131,7 +134,24 @@ services:
       - postgres_gql
 
   gql_granting:
-    image: hrbolek/gql_granting # where u user.events
+    image: hrbolek/gql_granting:0.8.5 # where u user.events
+    environment:
+      # link na db mimo stack
+      # - POSTGRES_HOST=host.docker.internal:5432
+      - POSTGRES_HOST=postgres_gql:5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_DB=data
+      - GQLUG_ENDPOINT_URL=http://gql_ug:8000/gql
+      - JWTPUBLICKEYURL=http://frontend:8000/oauth/publickey
+      - JWTRESOLVEUSERPATHURL=http://frontend:8000/oauth/userinfo
+      - DEMO=False
+      - DEMODATA=True
+    depends_on:
+      - postgres_gql
+
+  gql_projects:
+    image: hrbolek/gql_projects
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -148,7 +168,7 @@ services:
       - postgres_gql
 
   gql_forms:
-    image: hrbolek/gql_forms
+    image: hrbolek/gql_forms:0.8.5
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -174,8 +194,6 @@ services:
     depends_on:
       - postgres_gql
 
-
-
   postgres_gql:
     image: postgres
     environment:
@@ -189,8 +207,8 @@ services:
       timeout: 10s
       retries: 5
     restart: on-failure:3 # nedojde k restartu pokud je kontejner "unhealthy", maximalne 3 pokusy
-    # ports:
-    #   - 5432:5432
+    ports:
+       - 5432:5432
 
   postgres_credentials:
     image: postgres

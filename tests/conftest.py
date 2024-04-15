@@ -1,5 +1,9 @@
 import logging
 import pytest
+import pytest_asyncio
+import fastapi
+import uvicorn
+import os
 
 serversTestscope = "function"
 
@@ -115,5 +119,24 @@ def SetSalt(monkeypatch):
     # import main
     # main.DEMO = True
     yield
+
+# import pytest
+# from prometheus_client import REGISTRY
+
+# @pytest.fixture(autouse=True, scope="function")
+# def reset_prometheus_registry():
+#     # Save current collectors
+#     collectors = list(REGISTRY._collector_to_names.keys())
+    
+#     yield
+
+#     # Unregister all collectors after the test to ensure a clean state
+#     for collector in collectors:
+#         REGISTRY.unregister(collector)
+
+
+
+
+
 
     

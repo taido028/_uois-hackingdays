@@ -69,9 +69,13 @@ async def RunOnceAndReturnSessionMaker():
 # endregion
 
 
+# Set DEMO if it's not already set
+if 'DEMO' not in os.environ:
+    os.environ['DEMO'] = 'True'  # Or 'False' depending on your use case
+
 DEMO = os.getenv("DEMO", None)
 assert DEMO is not None, "DEMO environment variable must be explicitly defined"
-assert (DEMO == "True") or (DEMO == "False"), "DEMO environment variable can have only `True` or `False` values"
+assert DEMO == "True" or DEMO == "False", "DEMO environment variable can have only `True` or `False` values"
 DEMO = DEMO == "True"
 
 if DEMO:
